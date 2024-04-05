@@ -2,12 +2,13 @@ const navigatorErrorMessage = 'Could not find `userAgent` or `userAgentData` win
 const removeExcessMozillaAndVersion = /^mozilla\/\d\.\d\W/
 const browserPattern = /(\w+)\/(\d+\.\d+(?:\.\d+)?(?:\.\d+)?)/g
 const engineAndVersionPattern = /^(ver|cri|gec)/
-const userAgentData = window.navigator.userAgentData
-const userAgent = window.navigator.userAgent
+const brandList = ['chrome', 'opera', 'safari', 'edge', 'firefox']
 const unknown = 'Unknown'
 const empty = ''
+const { isArray } = Array
+let userAgentData = window.navigator.userAgentData
+let userAgent = window.navigator.userAgent
 
-const brandList = ['chrome', 'opera', 'safari', 'edge', 'firefox']
 const mobiles = {
   iphone: /iphone/,
   ipad: /ipad|macintosh/,
@@ -22,14 +23,14 @@ const desktops = {
 
 const detectPlatform = (customUserAgent, customUserAgentData) => {
   // Use a provided UA string instead of the browser's UA  
-  userAgent = typeof customUserAgent === 'string' ?  customUserAgent : userAgent
+  userAgent = typeof customUserAgent === 'string' ? customUserAgent : userAgent
 
   // Use a provided UA data string instead of the browser's UA data 
-  userAgentData = typeof customUserAgentData === 'string' ?  customUserAgentData : userAgentData
-  
+  userAgentData = typeof customUserAgentData === 'string' ? customUserAgentData : userAgentData
+
   if (userAgent) {
     const ua = userAgent.toLowerCase().replace(removeExcessMozillaAndVersion, empty)
-    
+
     // Determine the operating system.
     const mobileOS = Object.keys(mobiles).find(os => mobiles[os].test(ua) && window.navigator.maxTouchPoints >= 1)
     const desktopOS = Object.keys(desktops).find(os => desktops[os].test(ua))
@@ -37,16 +38,19 @@ const detectPlatform = (customUserAgent, customUserAgentData) => {
 
     // Extract browser and version information.
     const browserTest = ua.match(browserPattern)
+    const versionRegex = /version\/(\d+(\.\d+)*)/
+    const safariVersion = ua.match(versionRegex)
+    const saVesion = isArray(safariVersion) ? safariVersion[1] : null
     const browserOffset = browserTest && (browserTest.length > 2 && !(engineAndVersionPattern.test(browserTest[1])) ? 1 : 0)
     const browserResult = browserTest && browserTest[browserTest.length - 1 - (browserOffset || 0)].split('/')
     const browser = browserResult && browserResult[0]
-    const version = browserResult && browserResult[1]
+    const version = saVesion ? saVesion : browserResult && browserResult[1] 
 
     return { os, browser, version }
   } else if (userAgentData) {
     const os = userAgentData.platform.toLowerCase()
     let platformData
-    
+
     // Extract platform brand and version information.
     for (const agentBrand of userAgentData.brands) {
       const agentBrandEntry = agentBrand.brand.toLowerCase()
@@ -66,7 +70,7 @@ const detectPlatform = (customUserAgent, customUserAgentData) => {
     // Log error message if there's a problem.
     console
       .error(navigatorErrorMessage)
-    
+
     return {
       // Ignore the VSCode strikethough. Disable linting line if necessary. This is just a fallback
       os: navigator.platform || unknown,
@@ -75,4 +79,5 @@ const detectPlatform = (customUserAgent, customUserAgentData) => {
     }
   }
 }
+
 export default detectPlatform
