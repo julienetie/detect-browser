@@ -40,11 +40,11 @@ const detectPlatform = (customUserAgent, customUserAgentData) => {
     const browserTest = ua.match(browserPattern)
     const versionRegex = /version\/(\d+(\.\d+)*)/
     const safariVersion = ua.match(versionRegex)
-    const saVesion = isArray(safariVersion) ? safariVersion[1] : null
+    const saVersion = isArray(safariVersion) ? safariVersion[1] : null
     const browserOffset = browserTest && (browserTest.length > 2 && !(engineAndVersionPattern.test(browserTest[1])) ? 1 : 0)
     const browserResult = browserTest && browserTest[browserTest.length - 1 - (browserOffset || 0)].split('/')
     const browser = browserResult && browserResult[0]
-    const version = saVesion ? saVesion : browserResult && browserResult[1] 
+    const version = saVersion ? saVersion : browserResult && browserResult[1] 
 
     return { os, browser, version }
   } else if (userAgentData) {
@@ -72,7 +72,7 @@ const detectPlatform = (customUserAgent, customUserAgentData) => {
       .error(navigatorErrorMessage)
 
     return {
-      // Ignore the VSCode strikethough. Disable linting line if necessary. This is just a fallback
+      // Ignore the VSCode strikethrough. Disable linting line if necessary. This is just a fallback
       os: navigator.platform || unknown,
       browser: unknown,
       version: unknown
