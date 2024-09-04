@@ -44,7 +44,7 @@ const detectPlatform = (customUserAgent, customUserAgentData) => {
     const browserOffset = browserTest && (browserTest.length > 2 && !(engineAndVersionPattern.test(browserTest[1])) ? 1 : 0)
     const browserResult = browserTest && browserTest[browserTest.length - 1 - (browserOffset || 0)].split('/')
     let browser = browserResult && browserResult[0]
-    let version = saVesion ? saVesion : browserResult && browserResult[1]
+    let version = saVersion ? saVersion : browserResult && browserResult[1]
 
     // Check specifically for Edge
     if (ua.includes('edg/')) {
