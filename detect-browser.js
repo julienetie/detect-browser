@@ -51,7 +51,7 @@ const detectPlatform = (customUserAgent, customUserAgentData) => {
       const edgeMatch = ua.match(/edg\/(\d+\.\d+)/);
       browser = 'edge';
       version = edgeMatch && edgeMatch[1];
-    } 
+    }
 
     return { os, browser, version }
   } else if (userAgentData) {
