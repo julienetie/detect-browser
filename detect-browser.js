@@ -43,8 +43,15 @@ const detectPlatform = (customUserAgent, customUserAgentData) => {
     const saVersion = isArray(safariVersion) ? safariVersion[1] : null
     const browserOffset = browserTest && (browserTest.length > 2 && !(engineAndVersionPattern.test(browserTest[1])) ? 1 : 0)
     const browserResult = browserTest && browserTest[browserTest.length - 1 - (browserOffset || 0)].split('/')
-    const browser = browserResult && browserResult[0]
-    const version = saVersion ? saVersion : browserResult && browserResult[1] 
+    let browser = browserResult && browserResult[0]
+    let version = saVesion ? saVesion : browserResult && browserResult[1]
+
+    // Check specifically for Edge
+    if (ua.includes('edg/')) {
+      const edgeMatch = ua.match(/edg\/(\d+\.\d+)/);
+      browser = 'edge';
+      version = edgeMatch && edgeMatch[1];
+    } 
 
     return { os, browser, version }
   } else if (userAgentData) {
